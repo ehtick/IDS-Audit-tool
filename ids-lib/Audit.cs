@@ -84,11 +84,28 @@ public static partial class Audit
     /// <returns>A status enum that summarizes the result for all audits on the single stream</returns>
     public static Status Run(Stream idsSource, SingleAuditOptions options, ILogger? logger = null)
     {
+        ResolveSchemaProviderFallback(options);
         var auditSettings = new IdsLib.AuditHelper(logger, options);
         var t = AuditStreamAsync(idsSource, auditSettings, logger); // in  run(stream)
         t.Wait();
         return t.Result;
         // return AuditStreamAsync(idsSource, auditSettings, logger).Result; // in  run(stream)
+    }
+
+    /// <summary>
+    /// When the caller left <see cref="AuditProcessOptions.SchemaProvider"/> at its default
+    /// (i.e. did not explicitly configure a custom provider), substitutes a
+    /// <see cref="SchemaProviders.SeekableStreamSchemaProvider"/> that knows the caller's
+    /// declared <see cref="SingleAuditOptions.IdsVersion"/>, so a missing/empty
+    /// xsi:schemaLocation falls back to it instead of failing the audit outright.
+    /// </summary>
+    /// <param name="options">The options passed to a single-stream Run/RunAsync call.</param>
+    private static void ResolveSchemaProviderFallback(SingleAuditOptions options)
+    {
+        if (options.SchemaProvider is SchemaProviders.SeekableStreamSchemaProvider)
+        {
+            options.SchemaProvider = new SchemaProviders.SeekableStreamSchemaProvider(options.IdsVersion);
+        }
     }
 
 	/// <summary>
@@ -100,6 +117,7 @@ public static partial class Audit
 	/// <returns>A status enum that summarizes the result for all audits on the single stream</returns>
 	public static Task<Status> RunAsync(Stream idsSource, SingleAuditOptions options, ILogger? logger = null)
 	{
+		ResolveSchemaProviderFallback(options);
 		var auditSettings = new IdsLib.AuditHelper(logger, options);
 		return AuditStreamAsync(idsSource, auditSettings, logger); // in  run(stream)
 	}
