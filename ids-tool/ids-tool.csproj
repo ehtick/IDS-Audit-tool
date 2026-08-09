@@ -14,7 +14,7 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageTags>IDS, buildingSmart</PackageTags>
 		<!-- Github actions are setup so that when this version is bumped the nuget package is uploaded -->
-		<AssemblyVersion>1.0.123</AssemblyVersion>
+		<AssemblyVersion>1.0.124</AssemblyVersion>
 		<FileVersion>$(AssemblyVersion)</FileVersion>
 		<Version>$(AssemblyVersion)</Version>
 		<RepositoryUrl>https://github.com/buildingSMART/IDS-Audit-tool.git</RepositoryUrl>
@@ -22,21 +22,16 @@
 		<PackageReleaseNotes>Moved to net8.</PackageReleaseNotes>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<SourceControlInformationFeatureSupported>true</SourceControlInformationFeatureSupported>
+		
 	</PropertyGroup>
-
-	<!-- required for tool deployment -->
 	<PropertyGroup>
-		<NuspecFile>ids-tool.command.nuspec</NuspecFile>
-		<NoPackageAnalysis>true</NoPackageAnalysis>
-		<IntermediatePackDir>$(MSBuildProjectDirectory)/bin/$(Configuration)/publish/</IntermediatePackDir>
-		<PublishDir>$(IntermediatePackDir)$(TargetFramework)/</PublishDir>
-		<NuspecProperties>
-			publishDir=$([MSBuild]::NormalizeDirectory($(IntermediatePackDir)));
-			version=$(Version);
-			releaseNotes=$(PackageReleaseNotes);
-			copyright=$(Copyright)
-		</NuspecProperties>
+		<!-- Enable .NET Tool packaging -->
+		<PackageId>ids-tool.CommandLine</PackageId>
+		<PackAsTool>true</PackAsTool>
+		<ToolCommandName>ids-tool</ToolCommandName>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
+	
 	<!-- 
 	the following two targets tag the "product version" with version and commit hash 
 	such information is visible in the exe proprty information dialog.
@@ -65,6 +60,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="\" />
 		<None Include="..\graphics\icon.png">
 			<Pack>True</Pack>
 			<PackagePath></PackagePath>

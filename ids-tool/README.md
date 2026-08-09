@@ -4,6 +4,50 @@ This tool references the ids-lib, providing automation functions for buildingSMA
 
 You can use the compiled version of this tool as a command line executable, or reference ids-lib for your own development.
 
+## Installation & Execution via NuGet
+
+`ids-tool` is distributed via NuGet as a [.NET Tool](https://www.nuget.org/packages/ids-tool.CommandLine).
+
+### Global Tool Installation
+
+Install `ids-tool` globally on your machine using the .NET SDK:
+
+```bash
+# Install globally
+dotnet tool install --global ids-tool.CommandLine
+
+# Run from any terminal directory
+ids-tool audit "path/to/file.ids"
+
+# Update to the latest version
+dotnet tool update --global ids-tool.CommandLine
+```
+
+### Local Tool Installation (Repository Scoped)
+
+To pin `ids-tool` to a specific repository or team environment:
+
+```bash
+# Create a local tool manifest (if not already present)
+dotnet new tool-manifest
+
+# Install locally
+dotnet tool install ids-tool.CommandLine
+
+# Run via dotnet tool
+dotnet ids-tool audit "path/to/file.ids"
+```
+
+### Direct Package Execution / CI/CD (e.g. NUKE)
+
+If consuming the NuGet package payload directly without installing it (e.g. in automated build scripts):
+
+- The binary payload inside the `.nupkg` is located at `tools/net8.0/any/ids-tool.dll` (or `ids-tool.exe` on Windows).
+- **NUKE build script example:**
+  ```csharp
+  private Tool IdsTool => ToolResolver.GetPackageExecutable("ids-tool.CommandLine", "ids-tool.dll");
+  ```
+
 Run the `ids-tool` executable with no parameters for instructions.
 
 The tool uses a `verb + options` approach. For instance, verbs are:
